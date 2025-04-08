@@ -52,7 +52,7 @@ export default {
     },
     computed: {
         ...mapGetters({
-            contacts: 'getAllContacts'
+            contacts: 'getContacts'
         })
     },
     methods: {
@@ -69,7 +69,15 @@ export default {
                 })
                 this.selectedContacts = []
             }
-        }
+        },
+        toggleSelection(contactId) {
+            const index = this.selectedContacts.indexOf(contactId)
+            if (index === -1) {
+                this.selectedContacts.push(contactId)
+            } else {
+                this.selectedContacts.splice(index, 1)
+            }
+        },
     },
     created() {
         this.$store.dispatch('loadContacts')
