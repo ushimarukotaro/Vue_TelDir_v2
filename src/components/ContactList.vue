@@ -6,6 +6,15 @@
                 <h3>電話帳データ一覧</h3>
             </div>
             <div class="card-body">
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <div class="input-group">
+                        <input type="text" class="form-control" placeholder="名前または電話番号で検索" v-model="searchQuery">
+                        <button class="btn btn-outline-secondary" type="button" @click="search">検索</button>
+                        <button class="btn btn-outline-secondary" type="button" @click="clearSearch">クリア</button>
+                    </div>
+                </div>
+            </div>
                 <button class="btn btn-primary mb-3" @click="showAddForm">新規作成</button>
 
                 <table class="table table-hover" id="contact-table">
@@ -47,13 +56,18 @@ export default {
     name: 'ContactList',
     data() {
         return {
-            selectedContacts: []
+            selectedContacts: [],
+            searchQuery: '',
+            filteredContacts: []
         }
     },
     computed: {
         ...mapGetters({
-            contacts: 'getContacts'
-        })
+            allContacts: 'getContacts'
+        }),
+        contacts() {
+            return this.filteredContacts.length > 0 ? this.filteredContacts : this.allContacts
+        },
     },
     methods: {
         showAddForm() {
@@ -78,6 +92,22 @@ export default {
                 this.selectedContacts.splice(index, 1)
             }
         },
+        search() {
+            if(!this.searchQuery.trim()) {
+                this.filteredContacts = []
+                return
+            }
+            const query = this.searchQuery.toLowerCase()
+            this.filteredContacts = this.allContacts.filter(contact => {
+                return contact.name.toLowerCase().includes(query) ||
+                contact.phone.toLowerCase().includes(query) ||
+                contact.email.toLowerCase().includes(query)
+            })
+        },
+        clearSearch() {
+            this.searchQuery = ''
+            this.filteredContacts = []
+        }
     },
     created() {
         this.$store.dispatch('loadContacts')

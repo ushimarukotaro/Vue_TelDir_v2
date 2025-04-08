@@ -29,6 +29,9 @@ export default createStore({
         },
         DELETE_CONTACT(state, id) {
             state.contacts = state.contacts.filter(contact => contact.id !== id);
+        },
+        SET_CONTACTS(state, contacts) {
+            state.contacts = contacts;
         }
     },
     actions: {
