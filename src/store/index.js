@@ -57,14 +57,31 @@ export default createStore({
         }
     },
     actions: {
-        addContact({ commit }, contact) {
-            commit('ADD_CONTACT', contact);
+        loadContacts({ commit }) {
+            const savedContacts = localStorage.getItem('contacts')
+            if (savedContacts) {
+                commit('SET_CONTACTS', JSON.parse(savedContacts))
+            }
         },
-        updateContact({ commit }, contact) {
+        saveContacts({ state }) {
+            localStorage.setItem('contacts', JSON.stringify(state.contacts))
+        },
+        addContact({ commit, dispatch }, contact) {
+            const newContact = {
+                ...contact,
+                id: Date.now()
+            };
+            commit('ADD_CONTACT', newContact);
+            dispatch('saveContacts');
+            return newContact;
+        },
+        updateContact({ commit, dispatch }, contact) {
             commit('UPDATE_CONTACT', contact);
+            dispatch('saveContacts');
         },
-        deleteContact({ commit }, id) {
+        deleteContact({ commit, dispatch }, id) {
             commit('DELETE_CONTACT', id);
+            dispatch('saveContacts');
         },
         loadGroups({ commit }) {
             const savedGroups = localStorage.getItem('groups')
