@@ -10,8 +10,12 @@
                     <div class="col-md-6">
                         <div class="input-group">
                             <input type="text" class="form-control" placeholder="名前または電話番号で検索" v-model="searchQuery">
-                            <button class="btn btn-outline-secondary" type="button" @click="search">検索</button>
-                            <button class="btn btn-outline-secondary" type="button" @click="clearSearch">クリア</button>
+                            <button class="btn btn-outline-secondary" type="button" @click="search">
+                                <i class="bi bi-search me-1"></i>
+                            </button>
+                            <button class="btn btn-outline-secondary" type="button" @click="clearSearch">
+                                <i class="bi bi-x me-1"></i>
+                            </button>
                         </div>
                     </div>
                     <div class="col-md-6">
@@ -26,37 +30,43 @@
                         </div>
                     </div>
                 </div>
-                <button class="btn btn-primary mb-3" @click="showAddForm">新規作成</button>
+                <button class="btn btn-primary mb-3" @click="showAddForm">
+                    <i class="bi bi-plus-circle me-1"></i>新規作成
+                </button>
+                <div class="table-responsive">
+                    <table class="table table-hover" id="contact-table">
+                        <thead>
+                            <tr>
+                                <th>選択</th>
+                                <th>氏名</th>
+                                <th>電話番号</th>
+                                <th>メールアドレス</th>
+                                <th>グループ</th>
+                                <th>編集</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-for="contact in contacts" :key="contact.id">
+                                <td>
+                                    <input type="checkbox" v-model="selectedContacts" :value="contact.id">
+                                </td>
+                                <td>{{ contact.name }}</td>
+                                <td>{{ contact.phone }}</td>
+                                <td>{{ contact.email }}</td>
+                                <td>{{ getGroupName(contact.groupId) }}</td>
+                                <td>
+                                    <button type="button" class="btn btn-sm" @click="editContact(contact)">
+                                        <i class="bi bi-pencil"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
 
-                <table class="table table-hover" id="contact-table">
-                    <thead>
-                        <tr>
-                            <th>選択</th>
-                            <th>氏名</th>
-                            <th>電話番号</th>
-                            <th>メールアドレス</th>
-                            <th>グループ</th>
-                            <th>編集</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr v-for="contact in contacts" :key="contact.id">
-                            <td>
-                                <input type="checkbox" v-model="selectedContacts" :value="contact.id">
-                            </td>
-                            <td>{{ contact.name }}</td>
-                            <td>{{ contact.phone }}</td>
-                            <td>{{ contact.email }}</td>
-                            <td>{{ getGroupName(contact.groupId) }}</td>
-                            <td>
-                                <button type="button" class="btn btn-secondary btn-sm"
-                                    @click="editContact(contact)">編集</button>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-
-                <button class="btn btn-danger" @click="deleteSelected" :disabled="!selectedContacts.length">削除</button>
+                <button class="btn btn-danger" @click="deleteSelected" :disabled="!selectedContacts.length">
+                    <i class="bi bi-trash me-1"></i>削除
+                </button>
             </div>
         </div>
     </div>
