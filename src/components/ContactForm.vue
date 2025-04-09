@@ -25,6 +25,16 @@
                         <div v-if="errors.email" class="text-danger">{{ errors.email }}</div>
                     </div>
 
+                    <div class="mb-3">
+                        <label for="group" class="form-label">グループ</label>
+                        <select id="group" v-model="form.groupId" class="form-select">
+                            <option :value="null">グループなし</option>
+                            <option v-for="group in groups" :key="group.id" :value="group.id">
+                                {{ group.name }}
+                            </option>
+                        </select>
+                    </div>
+
                     <div class="d-flex justify-content-between">
                         <button type="button" class="btn btn-secondary" @click="closeForm">キャンセル</button>
                         <button type="submit" class="btn btn-primary">保存</button>
@@ -36,6 +46,8 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
+
 export default {
     name: 'ContactForm',
     props: {
@@ -54,7 +66,8 @@ export default {
             form: {
                 name: '',
                 phone: '',
-                email: ''
+                email: '',
+                groupId: null
             },
             errors: {
                 name: '',
@@ -64,6 +77,9 @@ export default {
         }
     },
     computed: {
+        ...mapGetters({
+            groups: 'getAllGroups'
+        }),
         formTitle() {
             return this.mode === 'add' ? '連絡先登録' : '連絡先編集'
         }
@@ -124,6 +140,7 @@ export default {
         if (this.mode === 'edit' && this.contact) {
             this.form = { ...this.contact }
         }
+        this.$store.dispatch('loadGroups')
     }
 }
 </script>
