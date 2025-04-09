@@ -7,6 +7,7 @@
         <td>{{ contact.name }}</td>
         <td>{{ contact.phone }}</td>
         <td>{{ contact.email }}</td>
+        <td>{{ getGroupName(contact.groupId) }}</td>
         <td class="text-center">
             <button type="button" class="btn btn-secondary btn-sm me-2" @click="$emit('edit', contact)">編集</button>
             <button type="button" class="btn btn-danger btn-sm" @click="deleteItem">削除</button>
@@ -32,6 +33,11 @@ export default {
             if (confirm(`${this.contact.name}の連絡先を削除しますか？`)) {
                 this.$store.dispatch('deleteContact', this.contact.id)
             }
+        },
+        getGroupName(groupId) {
+            if (!groupId) return '';
+            const group = this.groups.find(g => g.id === groupId);
+            return group ? group.name : ''
         }
     }
 }

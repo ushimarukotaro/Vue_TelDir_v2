@@ -24,6 +24,7 @@
                             <th>氏名</th>
                             <th>電話番号</th>
                             <th>メールアドレス</th>
+                            <th>グループ</th>
                             <th>編集</th>
                         </tr>
                     </thead>
@@ -35,6 +36,7 @@
                             <td>{{ contact.name }}</td>
                             <td>{{ contact.phone }}</td>
                             <td>{{ contact.email }}</td>
+                            <td>{{ getGroupName(contact.groupId) }}</td>
                             <td>
                                 <button type="button" class="btn btn-secondary btn-sm"
                                     @click="editContact(contact)">編集</button>
@@ -63,7 +65,8 @@ export default {
     },
     computed: {
         ...mapGetters({
-            allContacts: 'getContacts'
+            allContacts: 'getContacts',
+            groups: 'getAllGroups'
         }),
         contacts() {
             return this.filteredContacts.length > 0 ? this.filteredContacts : this.allContacts
@@ -107,10 +110,16 @@ export default {
         clearSearch() {
             this.searchQuery = ''
             this.filteredContacts = []
+        },
+        getGroupName(groupId) {
+            if (!groupId) return ''
+            const group = this.groups.find(g => g.id === groupId);
+            return group ? group.name : ''
         }
     },
     created() {
         this.$store.dispatch('loadContacts')
+        this.$store.dispatch('loadGroups')
     }
 }
 </script>
