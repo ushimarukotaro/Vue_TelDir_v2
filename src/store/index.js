@@ -40,19 +40,19 @@ export default createStore({
         SET_CONTACTS(state, contacts) {
             state.contacts = contacts;
         },
-        setGroups(state, groups) {
+        SET_GROUPS(state, groups) {
             state.groups = groups;
         },
-        addGroup(state, group) {
+        ADD_GROUPS(state, group) {
             state.groups.push(group);
         },
-        updateGroup(state, updatedGroup) {
+        UPDATE_GROUPS(state, updatedGroup) {
             const index = state.groups.findIndex(g => g.id === updatedGroup.id);
             if (index !== -1) {
                 state.groups.splice(index, 1, updatedGroup);
             }
         },
-        deleteGroup(state, groupId) {
+        DELETE_GROUPS(state, groupId) {
             state.groups = state.groups.filter(group => group.id !== groupId);
         }
     },
@@ -86,10 +86,10 @@ export default createStore({
         loadGroups({ commit }) {
             const savedGroups = localStorage.getItem('groups')
             if(savedGroups) {
-                commit('setGroups', JSON.parse(savedGroups));
+                commit('SET_GROUPS', JSON.parse(savedGroups));
             }
         },
-        savedGroups({ state }) {
+        saveGroups({ state }) {
             localStorage.setItem('groups', JSON.stringify(state.groups));
         },
         addGroup({ commit, dispatch }, group) {
@@ -97,21 +97,21 @@ export default createStore({
                 ...group,
                 id: Date.now()
             };
-            commit('addGroup', newGroup);
-            dispatch('savedGroups');
+            commit('ADD_GROUPS', newGroup);
+            dispatch('saveGroups');
             return newGroup;
         },
         updateGroup({ commit, dispatch }, group) {
-            commit('updateGroup', group);
-            dispatch('savedGroups');
+            commit('UPDATE_GROUPS', group);
+            dispatch('saveGroups');
         },
         deleteGroup({ commit, dispatch, state }, groupId) {
             const contactsToUpdate = state.contacts.filter(c => c.groupId === groupId);
             contactsToUpdate.forEach(contact => {
                 dispatch('updateContact', {...contact, groupId: null });
             });
-            commit('deleteGroup', groupId);
-            dispatch('savedGroups');
+            commit('DELETE_GROUPS', groupId);
+            dispatch('saveGroups');
         },
     }
 })

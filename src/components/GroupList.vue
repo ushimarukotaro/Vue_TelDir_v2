@@ -22,7 +22,9 @@
                         </td>
                         <td>{{ group.name }}</td>
                         <td>
-                            <button type="button" class="btn btn-secondary btn-sm" @click="editGroup(group)">編集</button>
+                            <button type="button" class="btn btn-sm" @click="editGroup(group)">
+                                <i class="bi bi-pencil"></i>
+                            </button>
                         </td>
                     </tr>
                 </tbody>

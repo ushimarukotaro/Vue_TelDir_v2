@@ -47,6 +47,7 @@
 
 <script>
 import { mapGetters } from 'vuex'
+import { useToast } from '../composables/useToast'
 
 export default {
     name: 'ContactForm',
@@ -78,11 +79,16 @@ export default {
     },
     computed: {
         ...mapGetters({
-            groups: 'getAllGroups'
+            groups: 'getAllGroups',
+            getContactById: 'getContactById'
         }),
         formTitle() {
             return this.mode === 'add' ? '連絡先登録' : '連絡先編集'
-        }
+        },
+    },
+    setup() {
+        const { showToast } = useToast()
+        return { showToast }
     },
     methods: {
         closeForm() {
@@ -119,21 +125,23 @@ export default {
 
             return isValid
         },
-        submitForm() {
+        async submitForm() {
             if (!this.validate()) {
                 return
             }
 
             if (this.mode === 'add') {
-                this.$store.dispatch('addContact', { ...this.form })
+                await this.$store.dispatch('addContact', { ...this.form })
+                this.showToast('連絡先を追加しました')
             } else {
-                this.$store.dispatch('updateContact', {
+                await this.$store.dispatch('updateContact', {
                     id: this.contact.id,
                     ...this.form
                 })
+                this.showToast('連絡先を更新しました')
             }
 
-            this.closeForm()
+            this.closeForm();
         }
     },
     created() {
