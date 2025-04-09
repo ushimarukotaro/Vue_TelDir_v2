@@ -6,15 +6,26 @@
                 <h3>電話帳データ一覧</h3>
             </div>
             <div class="card-body">
-            <div class="row mb-3">
-                <div class="col-md-6">
-                    <div class="input-group">
-                        <input type="text" class="form-control" placeholder="名前または電話番号で検索" v-model="searchQuery">
-                        <button class="btn btn-outline-secondary" type="button" @click="search">検索</button>
-                        <button class="btn btn-outline-secondary" type="button" @click="clearSearch">クリア</button>
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <div class="input-group">
+                            <input type="text" class="form-control" placeholder="名前または電話番号で検索" v-model="searchQuery">
+                            <button class="btn btn-outline-secondary" type="button" @click="search">検索</button>
+                            <button class="btn btn-outline-secondary" type="button" @click="clearSearch">クリア</button>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="input-group">
+                            <label class="input-group-text">グループで絞り込み</label>
+                            <select class="form-select" v-model="selectedGroupId">
+                                <option :value="null">全て表示</option>
+                                <option v-for="group in groups" :key="group.id" :value="group.id">
+                                    {{ group.name }}
+                                </option>
+                            </select>
+                        </div>
                     </div>
                 </div>
-            </div>
                 <button class="btn btn-primary mb-3" @click="showAddForm">新規作成</button>
 
                 <table class="table table-hover" id="contact-table">
@@ -60,16 +71,27 @@ export default {
         return {
             selectedContacts: [],
             searchQuery: '',
-            filteredContacts: []
+            filteredContacts: [],
+            selectedGroupId: null
         }
     },
     computed: {
         ...mapGetters({
             allContacts: 'getContacts',
-            groups: 'getAllGroups'
+            groups: 'getAllGroups',
+            getContactsByGroup: 'getContactsByGroup'
         }),
         contacts() {
-            return this.filteredContacts.length > 0 ? this.filteredContacts : this.allContacts
+            let result = this.allContacts
+            if (this.selectedGroupId !== null) {
+                result = this.getContactsByGroup(this.selectedGroupId)
+            }
+            if (this.filteredContacts.length > 0) {
+                const filteredIds = this.filteredContacts.map(c => c.id)
+                result = result.filter(contact => filteredIds.includes(contact.id))
+            }
+
+            return result
         },
     },
     methods: {
@@ -120,6 +142,12 @@ export default {
     created() {
         this.$store.dispatch('loadContacts')
         this.$store.dispatch('loadGroups')
-    }
+    },
+    watch: {
+        selectedGroupId() {
+            this.filteredContacts = []
+            this.searchQuery = ''
+        }
+    },
 }
 </script>
